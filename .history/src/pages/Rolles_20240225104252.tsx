@@ -350,6 +350,640 @@ export default RollesPage;
 
 
 
+// // RolesPage.tsx
+// import React, { useState, ChangeEvent } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { addRole, editRole, deleteRole, searchRoles } from '../redux/reducers/roleReducer';
+// import { RootState, Role } from '../redux/types';
+
+// const predefinedPermissions: string[] = ['3 permission ', '5 rolls', '5 permission', '6 roles'];
+
+// const RolesPage: React.FC = () => {
+//   const itemsPerPage = 3;
+//   const dispatch = useDispatch();
+//   const roles = useSelector((state: RootState) => state.roles);
+//   const [newRole, setNewRole] = useState<Role>({
+//     id: '0',
+//     name: '',
+//     description: '',
+//     permissions: [],
+//   });
+
+//   const [modalOpen, setModalOpen] = useState<boolean>(false);
+//   const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
+//   const [roleToDelete, setRoleToDelete] = useState<string | null>(null);
+//   const [currentPage, setCurrentPage] = useState<number>(1);
+//   const [searchTerm, setSearchTerm] = useState<string>('');
+
+//   const serverEndpoint = 'https://sheba-app.onrender.com/api/roles';
+
+//   const handleAddRole = async () => {
+//     if (newRole.name.trim() === '') {
+//       console.error('Role name cannot be empty');
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch(`${serverEndpoint}/create`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(newRole),
+//       });
+
+//       if (response.ok) {
+//         const addedRole = await response.json(); // Assuming the server returns the added role
+//         dispatch(addRole(addedRole));
+//         setNewRole({
+//           id: '0',
+//           name: '',
+//           description: '',
+//           permissions: [],
+//         });
+//         setModalOpen(false);
+//         setCurrentPage(1);
+//       } else {
+//         console.error('Failed to add role:', response.statusText);
+//       }
+//     } catch (error) {
+//       console.error('Error adding role:', error.message);
+//     }
+//   };
+
+//   const handleEditRole = (id: string) => {
+//     const roleToEdit = roles.find((role) => role.id === id);
+//     if (roleToEdit) {
+//       setNewRole({ ...roleToEdit });
+//       setModalOpen(true);
+//     }
+//   };
+
+//   const handleSaveEdit = async () => {
+//     try {
+//       const response = await fetch(`${serverEndpoint}/${newRole.id}/update`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(newRole),
+//       });
+
+//       if (response.ok) {
+//         dispatch(editRole(newRole));
+//         setNewRole({
+//           id: '0',
+//           name: '',
+//           description: '',
+//           permissions: [],
+//         });
+//         setModalOpen(false);
+//       } else {
+//         console.error('Failed to edit role:', response.statusText);
+//       }
+//     } catch (error) {
+//       console.error('Error editing role:', error.message);
+//     }
+//   };
+
+//   const handleDeleteRole = (id: string) => {
+//     setRoleToDelete(id);
+//     setConfirmModalOpen(true);
+//   };
+
+//   const confirmDelete = async () => {
+//     if (roleToDelete !== null) {
+//       try {
+//         const response = await fetch(`${serverEndpoint}/${roleToDelete}/delete`, {
+//           method: 'DELETE',
+//         });
+
+//         if (response.ok) {
+//           dispatch(deleteRole(roleToDelete));
+//           setRoleToDelete(null);
+//           setConfirmModalOpen(false);
+//           setCurrentPage(1);
+//         } else {
+//           console.error('Failed to delete role:', response.statusText);
+//         }
+//       } catch (error) {
+//         console.error('Error deleting role:', error.message);
+//       }
+//     }
+//   };
+
+//   const handlePermissionChange = (permission: string) => {
+//     const isChecked = newRole.permissions.includes(permission);
+//     const updatedPermissions = isChecked
+//       ? newRole.permissions.filter((p) => p !== permission)
+//       : [...newRole.permissions, permission];
+
+//     setNewRole({ ...newRole, permissions: updatedPermissions });
+//   };
+
+//   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+//     const term = e.target.value.toLowerCase();
+//     setSearchTerm(term);
+//     dispatch(searchRoles(term));
+//     setCurrentPage(1);
+//   };
+
+//   // Pagination
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentItems = roles
+//     .filter((role) => role.name.toLowerCase().includes(searchTerm))
+//     .slice(indexOfFirstItem, indexOfLastItem);
+
+//   const renderPageNumbers = () => {
+//     const pageNumbers = Math.ceil(roles.length / itemsPerPage);
+//     const pages = [];
+
+//     for (let i = 1; i <= pageNumbers; i++) {
+//       pages.push(
+//         <button
+//           key={i}
+//           className={`mr-2 px-4 py-2 rounded focus:outline-none ${
+//             i === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-300'
+//           }`}
+//           onClick={() => setCurrentPage(i)}
+//         >
+//           {i}
+//         </button>
+//       );
+//     }
+
+//     return (
+//       <div className="flex mt-4 justify-center">
+//         {currentPage > 1 && (
+//           <button
+//             className="mr-2 px-4 py-2 rounded focus:outline-none bg-gray-300"
+//             onClick={() => setCurrentPage(currentPage - 1)}
+//           >
+//             &laquo; Prev
+//           </button>
+//         )}
+//         {pages}
+//         {currentPage < pageNumbers && (
+//           <button
+//             className="ml-2 px-4 py-2 rounded focus:outline-none bg-gray-300"
+//             onClick={() => setCurrentPage(currentPage + 1)}
+//           >
+//             Next &raquo;
+//           </button>
+//         )}
+//       </div>
+//     );
+//   };
+
+//   return (
+//     <div className="container mx-auto mt-8 block with-shadow">
+//       <h1 className="text-lg font-semibold mb-4">Roles Management</h1>
+
+//       <div className="mb-2 flex justify-end gap-2">
+//         <label>Search:</label>
+//         <input
+//           type="text"
+//           placeholder="Search roles..."
+//           className="form-input mt-1 block rounded border"
+//           value={searchTerm}
+//           onChange={handleSearch}
+//         />
+//       </div>
+
+//       <button
+//         className="add__role bg-indigo-950 hover:bg-indigo-900 text-white font-bold py-2 px-4 mb-4 rounded"
+//         onClick={() => setModalOpen(true)}
+//       >
+//         Add Role
+//       </button>
+
+//       <table className="w-full">
+//         <thead>
+//           <tr className='bg-gray-300'>
+//             <th className="text-left">ID</th>
+//             <th className="text-left">Name</th>
+//             <th className="text-left">Description</th>
+//             <th className="text-left">Total Permissions</th>
+//             <th className="text-left">Actions</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {currentItems.map((role) => (
+//             <tr key={role.id}>
+//               <td>{role.id}</td>
+//               <td>{role.name}</td>
+//               <td>{role.description}</td>
+//               <td>{role.permissions.length}</td>
+//               <td>
+//                 <button
+//                   className="text-indigo-900 hover:underline mr-2"
+//                   onClick={() => handleEditRole(role.id)}
+//                 >
+//                   Edit
+//                 </button>
+//                 <button
+//                   className="text-pink-500 hover:underline"
+//                   onClick={() => handleDeleteRole(role.id)}
+//                 >
+//                   Delete
+//                 </button>
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+
+//       {renderPageNumbers()}
+
+//       {modalOpen && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+//           <div className="bg-white p-8 rounded-lg shadow-2xl">
+//             <h2 className="text-2xl font-bold mb-4">{newRole.id ? 'Edit' : 'Add'} Role</h2>
+//             <label className="block mb-4">
+//               Name:
+//               <input
+//                 type="text"
+//                 className="form-input mt-1 block w-full"
+//                 value={newRole.name}
+//                 onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+//               />
+//             </label>
+//             <label className="block mb-4">
+//               Description:
+//               <textarea
+//                 className="form-input mt-1 block w-full"
+//                 value={newRole.description}
+//                 onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+//               />
+//             </label>
+//             <div className="mb-4">
+//               Permissions:
+//               {predefinedPermissions.map((permission) => (
+//                 <label key={permission} className="items-center mr-2 block">
+//                   <input
+//                     type="checkbox"
+//                     checked={newRole.permissions.includes(permission)}
+//                     onChange={() => handlePermissionChange(permission)}
+//                     className="form-checkbox h-5 w-5 text-indigo-600"
+//                   />
+//                   <span className="ml-2">{permission}</span>
+//                 </label>
+//               ))}
+//             </div>
+//             <div className="flex justify-end">
+//               <button
+//                 className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 mr-2 rounded"
+//                 onClick={handleAddRole}
+//               >
+//                 {newRole.id ? 'Save' : 'Add'}
+//               </button>
+//               <button
+//                 className="bg-indigo-950 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded"
+//                 onClick={() => setModalOpen(false)}
+//               >
+//                 Cancel
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       {confirmModalOpen && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+//           <div className="bg-white p-8 rounded-lg shadow-2xl">
+//             <p className="text-lg mb-4">Are you sure you want to delete this role?</p>
+//             <div className="flex justify-end">
+//               <button
+//                 className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 mr-2 rounded"
+//                 onClick={confirmDelete}
+//               >
+//                 Yes
+//               </button>
+//               <button
+//                 className="bg-indigo-950 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded"
+//                 onClick={() => setConfirmModalOpen(false)}
+//               >
+//                 No
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default RolesPage;
+
+
+
+// // this integrate with redux
+
+// // // RolesPage.tsx
+// // import React, { useState, ChangeEvent } from 'react';
+// // import { useDispatch, useSelector } from 'react-redux';
+// // import { addRole, editRole, deleteRole, searchRoles } from '../redux/reducers/roleReducer';
+// // import { RootState, Role } from '../redux/types';
+
+// // const predefinedPermissions: string[] = ['3 permission ', '5 rolls', '5 permission', '6 roles'];
+
+// // const RolesPage: React.FC = () => {
+// //   const itemsPerPage = 3;
+// //   const dispatch = useDispatch();
+// //   const roles = useSelector((state: RootState) => state.roles);
+// //   const [newRole, setNewRole] = useState<Role>({
+// //     id: '0',
+// //     name: '',
+// //     description: '',
+// //     permissions: [],
+// //   });
+
+// //   const [modalOpen, setModalOpen] = useState<boolean>(false);
+// //   const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
+// //   const [roleToDelete, setRoleToDelete] = useState<string | null>(null);
+// //   const [currentPage, setCurrentPage] = useState<number>(1);
+// //   const [searchTerm, setSearchTerm] = useState<string>('');
+
+
+// //   const handleAddRole = () => {
+// //     if (newRole.name.trim() === '') {
+// //       // Show an error message or handle the validation error as needed
+// //       console.error('Role name cannot be empty');
+// //       return;
+// //     }
+  
+// //     dispatch(addRole(newRole));
+// //     setNewRole({
+// //       id: '0',
+// //       name: '',
+// //       description: '',
+// //       permissions: [],
+// //     });
+// //     setModalOpen(false);
+// //     setCurrentPage(1); // Reset to the first page after adding a role
+// //   };
+
+// //   // const handleAddRole = () => {
+// //   //   if (newRole.name.trim() === '') {
+// //   //     // Validate that the role name is not empty
+// //   //     // You might want to show an error message to the user
+// //   //     return;
+// //   //   }
+
+// //   //   dispatch(addRole(newRole));
+// //   //   setNewRole({
+// //   //     id: '0',
+// //   //     name: '',
+// //   //     description: '',
+// //   //     permissions: [],
+// //   //   });
+// //   //   setModalOpen(false);
+// //   //   setCurrentPage(1); // Reset to the first page after adding a role
+// //   // };
+
+// //   const handleEditRole = (id: string) => {
+// //     const roleToEdit = roles.find((role) => role.id === id);
+// //     if (roleToEdit) {
+// //       setNewRole({ ...roleToEdit });
+// //       setModalOpen(true); // Open the modal for editing
+// //     }
+// //   };
+
+// //   const handleSaveEdit = () => {
+// //     dispatch(editRole(newRole));
+// //     setNewRole({
+// //       id: '0',
+// //       name: '',
+// //       description: '',
+// //       permissions: [],
+// //     });
+// //     setModalOpen(false);
+// //   };
+
+// //   const handleDeleteRole = (id: string) => {
+// //     setRoleToDelete(id);
+// //     setConfirmModalOpen(true);
+// //   };
+
+// //   const handlePermissionChange = (permission: string) => {
+// //     const isChecked = newRole.permissions.includes(permission);
+// //     const updatedPermissions = isChecked
+// //       ? newRole.permissions.filter((p) => p !== permission)
+// //       : [...newRole.permissions, permission];
+
+// //     setNewRole({ ...newRole, permissions: updatedPermissions });
+// //   };
+
+// //   const confirmDelete = () => {
+// //     if (roleToDelete !== null) {
+// //       dispatch(deleteRole(roleToDelete));
+// //       setRoleToDelete(null);
+// //       setConfirmModalOpen(false);
+// //       setCurrentPage(1); // Reset to the first page after deletion
+// //     }
+// //   };
+
+// //   const cancelDelete = () => {
+// //     setRoleToDelete(null);
+// //     setConfirmModalOpen(false);
+// //   };
+
+// //   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+// //     const term = e.target.value.toLowerCase();
+// //     setSearchTerm(term);
+// //     dispatch(searchRoles(term));
+// //     setCurrentPage(1); // Reset to the first page after search
+// //   };
+
+// //   // Pagination
+// //   const indexOfLastItem = currentPage * itemsPerPage;
+// //   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+// //   const currentItems = roles
+// //     .filter((role) => role.name.toLowerCase().includes(searchTerm))
+// //     .slice(indexOfFirstItem, indexOfLastItem);
+
+// //   const renderPageNumbers = () => {
+// //     const pageNumbers = Math.ceil(roles.length / itemsPerPage);
+// //     const pages = [];
+
+// //     for (let i = 1; i <= pageNumbers; i++) {
+// //       pages.push(
+// //         <button
+// //           key={i}
+// //           className={`mr-2 px-4 py-2 rounded focus:outline-none ${
+// //             i === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-300'
+// //           }`}
+// //           onClick={() => setCurrentPage(i)}
+// //         >
+// //           {i}
+// //         </button>
+// //       );
+// //     }
+
+// //     return (
+// //       <div className="flex mt-4 justify-center">
+// //         {currentPage > 1 && (
+// //           <button
+// //             className="mr-2 px-4 py-2 rounded focus:outline-none bg-gray-300"
+// //             onClick={() => setCurrentPage(currentPage - 1)}
+// //           >
+// //             &laquo; Prev
+// //           </button>
+// //         )}
+// //         {pages}
+// //         {currentPage < pageNumbers && (
+// //           <button
+// //             className="ml-2 px-4 py-2 rounded focus:outline-none bg-gray-300"
+// //             onClick={() => setCurrentPage(currentPage + 1)}
+// //           >
+// //             Next &raquo;
+// //           </button>
+// //         )}
+// //       </div>
+// //     );
+// //   };
+
+// //   return (
+// //     <div className="container mx-auto mt-8 block with-shadow">
+// //       <h1 className="text-lg font-semibold mb-4">Roles Management</h1>
+
+// //       <div className="mb-2 flex justify-end gap-2">
+// //         <label>Search:</label>
+// //         <input
+// //           type="text"
+// //           placeholder="Search roles..."
+// //           className="form-input mt-1 block rounded border"
+// //           value={searchTerm}
+// //           onChange={handleSearch}
+// //         />
+// //       </div>
+
+// //       <button
+// //         className="add__role bg-indigo-950 hover:bg-indigo-900 text-white font-bold py-2 px-4 mb-4 rounded"
+// //         onClick={() => setModalOpen(true)}
+// //       >
+// //         Add Role
+// //       </button>
+
+// //       <table className="w-full">
+// //         <thead>
+// //           <tr className='bg-gray-300'>
+// //             <th className="text-left">ID</th>
+// //             <th className="text-left">Name</th>
+// //             <th className="text-left">Description</th>
+// //             <th className="text-left">Total Permissions</th>
+// //             <th className="text-left">Actions</th>
+// //           </tr>
+// //         </thead>
+// //         <tbody>
+// //           {currentItems.map((role) => (
+// //             <tr key={role.id}>
+// //               <td>{role.id}</td>
+// //               <td>{role.name}</td>
+// //               <td>{role.description}</td>
+// //               <td>{role.permissions.length}</td>
+// //               <td>
+// //                 <button
+// //                   className="text-indigo-900 hover:underline mr-2"
+// //                   onClick={() => handleEditRole(role.id)}
+// //                 >
+// //                   Edit
+// //                 </button>
+// //                 <button
+// //                   className="text-pink-500 hover:underline"
+// //                   onClick={() => handleDeleteRole(role.id)}
+// //                 >
+// //                   Delete
+// //                 </button>
+// //               </td>
+// //             </tr>
+// //           ))}
+// //         </tbody>
+// //       </table>
+
+// //       {renderPageNumbers()}
+
+// //       {modalOpen && (
+// //         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+// //           <div className="bg-white p-8 rounded-lg shadow-2xl">
+// //             <h2 className="text-2xl font-bold mb-4">{newRole.id ? 'Edit' : 'Add'} Role</h2>
+// //             <label className="block mb-4">
+// //               Name:
+// //               <input
+// //                 type="text"
+// //                 className="form-input mt-1 block w-full"
+// //                 value={newRole.name}
+// //                 onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+// //               />
+// //             </label>
+// //             <label className="block mb-4">
+// //               Description:
+// //               <textarea
+// //                 className="form-input mt-1 block w-full"
+// //                 value={newRole.description}
+// //                 onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+// //               />
+// //             </label>
+// //             <div className="mb-4">
+// //               Permissions:
+// //               {predefinedPermissions.map((permission) => (
+// //                 <label key={permission} className="items-center mr-2 block">
+// //                   <input
+// //                     type="checkbox"
+// //                     checked={newRole.permissions.includes(permission)}
+// //                     onChange={() => handlePermissionChange(permission)}
+// //                     className="form-checkbox h-5 w-5 text-indigo-600"
+// //                   />
+// //                   <span className="ml-2">{permission}</span>
+// //                 </label>
+// //               ))}
+// //             </div>
+// //             <div className="flex justify-end">
+// //               <button
+// //                 className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 mr-2 rounded"
+// //                 onClick={handleAddRole}
+// //               >
+// //                 {newRole.id ? 'Save' : 'Add'}
+// //               </button>
+// //               <button
+// //                 className="bg-indigo-950 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded"
+// //                 onClick={() => setModalOpen(false)}
+// //               >
+// //                 Cancel
+// //               </button>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       )}
+
+// //       {confirmModalOpen && (
+// //         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+// //           <div className="bg-white p-8 rounded-lg shadow-2xl">
+// //             <p className="text-lg mb-4">Are you sure you want to delete this role?</p>
+// //             <div className="flex justify-end">
+// //               <button
+// //                 className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 mr-2 rounded"
+// //                 onClick={confirmDelete}
+// //               >
+// //                 Yes
+// //               </button>
+// //               <button
+// //                 className="bg-indigo-950 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded"
+// //                 onClick={cancelDelete}
+// //               >
+// //                 No
+// //               </button>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       )}
+// //     </div>
+// //   );
+// // };
+
+// // export default RolesPage;
+
 
 
 
