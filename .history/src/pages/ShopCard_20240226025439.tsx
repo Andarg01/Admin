@@ -1,62 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 interface Shop {
   id: string;
   name: string;
   description: string;
   picture: string;
-  shopUrl: string;
+  permissionName: string;
+  shopUrl: string; // Include shopUrl in the Shop interface
 }
 
 const ShopPage: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
 
   useEffect(() => {
+    const fetchShops = async () => {
+      try {
+        const response = await axios.get<Shop[]>(
+          "https://sheba-app.onrender.com/api/shops/user/all"
+        );
+        setShops(response.data);
+      } catch (error) {
+        console.error("Error fetching shops:", error);
+      }
+    };
+
     fetchShops();
   }, []);
 
-  const fetchShops = async () => {
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-
-      if (!accessToken) {
-        console.error("Access token not found");
-        // Handle unauthorized access, e.g., redirect to login page
-        return;
-      }
-
-      const response = await axios.get<Shop[]>('https://sheba-app.onrender.com/api/shops/user/all', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      setShops(response.data);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized access");
-        // Handle unauthorized access, e.g., redirect to login page
-      } else {
-        console.error('Error fetching shops:', error);
-      }
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Shops</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <h1 className="text-3xl font-bold mb-4">Shops</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {shops.map((shop) => (
-          <div key={shop.id} className="bg-white rounded-lg shadow-xl p-4 xl:shadow-2xl">
+          <div
+            key={shop.id}
+            className="bg-white rounded-xl p-6 shadow-xl hover:shadow-2xl transition duration-300"
+          >
             <img
               src={shop.picture}
               alt={shop.name}
               className="w-full h-40 object-cover mb-4 rounded-lg"
             />
-            <h2 className="text-lg font-bold mb-2">{shop.name}</h2>
-            <p className="mb-2">{shop.description}</p>
+            <h2 className="text-xl font-semibold mb-2">{shop.name}</h2>
+            <p className="text-gray-600 mb-2">{shop.description}</p>
+            <p className="text-gray-600 mb-2">Permission: {shop.permissionName}</p>
             <a
-              href={shop.shopUrl}
+              href={shop.shopUrl} // Use shopUrl to create the link
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
@@ -71,6 +61,67 @@ const ShopPage: React.FC = () => {
 };
 
 export default ShopPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // import React, { useEffect } from 'react';
+// // import { useDispatch, useSelector } from 'react-redux';
+// // import axios from 'axios';
+// // import { fetchShopsSuccess, fetchShopsFailure } from './actions';
+
+// // const ShopPage: React.FC = () => {
+// //   const dispatch = useDispatch();
+// //   const shops = useSelector((state) => state.shops);
+
+// //   useEffect(() => {
+// //     fetchShops();
+// //   }, []);
+
+// //   const fetchShops = async () => {
+// //     try {
+// //       const response = await axios.get('https://sheba-app.onrender.com/api/shops/user/all');
+// //       dispatch(fetchShopsSuccess(response.data));
+// //     } catch (error) {
+// //       dispatch(fetchShopsFailure(error));
+// //     }
+// //   };
+
+// //   return (
+// //     <div className="container mx-auto px-4 py-8">
+// //       <h1 className="text-2xl font-bold mb-4">Shops</h1>
+// //       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+// //         {shops.map((shop) => (
+// //           <div key={shop.id} className="bg-white rounded-lg shadow-xl p-4">
+// //             <h2 className="text-lg font-bold mb-2">{shop.name}</h2>
+// //             <p className="mb-2">{shop.description}</p>
+// //             {/* Display other shop details */}
+// //           </div>
+// //         ))}
+// //       </div>
+// //     </div>
+// //   );
+// // };
+
+// // export default ShopPage;
+
+
+
+
+
+
+
+
+
 
 
 
