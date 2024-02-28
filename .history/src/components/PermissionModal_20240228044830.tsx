@@ -46,7 +46,7 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
           />
       
       </div>
-      <div className='mb-4'>
+      <div className='mb-4'></div>
       <label className="block text-sm font-semibold mb-2">
         Description:
         </label>
@@ -55,14 +55,10 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
         />
         </div>
       <div>
-      <button onClick={handleSave}
-       className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-gray-800"
-      >Save</button>
-      <button onClick={onClose}
-      className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700"
-      >Cancel</button>
+      <button onClick={handleSave}>Save</button>
+      <button onClick={onClose}>Cancel</button>
       </div>
-      </div>
+   
     </div>
   );
 };

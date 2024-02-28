@@ -54,7 +54,7 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
         className="w-full p-2 border border-gray-300 rounded-md"
         />
         </div>
-      <div>
+      <div className=' justify-end'>
       <button onClick={handleSave}
        className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-gray-800"
       >Save</button>

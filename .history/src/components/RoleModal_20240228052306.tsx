@@ -66,20 +66,12 @@ const RoleModal: React.FC<RoleModalProps> = ({ onClose, role }) => {
         />
      
       </div>
-      <div className='mb-4'>
-      <label className="block text-sm font-semibold mb-2">
+      <label>
         Default:
-        </label>
-        <input type="checkbox" checked={isDefault} onChange={() => setIsDefault(!isDefault)} 
-        className="w-full p-2 border border-gray-300 rounded-md"/>
-      </div>
-
-      <button onClick={handleSave}
-      className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-gray-800"
-      >Save</button>
-      <button onClick={onClose}
-       className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700"
-      >Cancel</button>
+        <input type="checkbox" checked={isDefault} onChange={() => setIsDefault(!isDefault)} />
+      </label>
+      <button onClick={handleSave}>Save</button>
+      <button onClick={onClose}>Cancel</button>
       </div>
      </div>
   );

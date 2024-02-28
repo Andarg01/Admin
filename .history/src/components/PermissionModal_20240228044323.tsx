@@ -41,27 +41,15 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
       <label className="block text-sm font-semibold mb-2">
         Name:
         </label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-         className="w-full p-2 border border-gray-300 rounded-md"
-          />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       
       </div>
-      <div className='mb-4'>
-      <label className="block text-sm font-semibold mb-2">
+      <label>
         Description:
-        </label>
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} 
-        className="w-full p-2 border border-gray-300 rounded-md"
-        />
-        </div>
-      <div>
-      <button onClick={handleSave}
-       className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-gray-800"
-      >Save</button>
-      <button onClick={onClose}
-      className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700"
-      >Cancel</button>
-      </div>
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+      </label>
+      <button onClick={handleSave}>Save</button>
+      <button onClick={onClose}>Cancel</button>
       </div>
     </div>
   );

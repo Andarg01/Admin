@@ -46,7 +46,7 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
           />
       
       </div>
-      <div className='mb-4'>
+      <div className='mb-4'></div>
       <label className="block text-sm font-semibold mb-2">
         Description:
         </label>
@@ -62,7 +62,7 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
       className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700"
       >Cancel</button>
       </div>
-      </div>
+   
     </div>
   );
 };

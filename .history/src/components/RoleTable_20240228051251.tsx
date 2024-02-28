@@ -40,7 +40,7 @@ const RoleTable: React.FC = () => {
 
   return (
     <div className="overflow-x-auto bg-white border border-gray-300 p-6 rounded-lg shadow-md transition duration-500 ease-in-out">
-      <button onClick={handleCreate} className='bg-indigo-950 border rounded hover:m-2 text-white'>Create Role</button>
+      <button onClick={handleCreate}>Create Role</button>
       <table className="min-w-full border-b border-gray-300">
         <thead>
           <tr>
@@ -57,12 +57,8 @@ const RoleTable: React.FC = () => {
               <td className="py-2 px-4 border-r">{role.description}</td>
               <td className="py-2 px-4 border-r">{role.permissions.length}</td>
               <td className="py-2 px-4">
-                <button onClick={() => handleEdit(role)}
-                className="edit hover:underline mr-2 hover:text-gray-700"
-                >Edit</button>
-                <button onClick={() => handleDelete(role.id)}
-                className="delete hover:underline hover:text-red-700"
-                >Delete</button>
+                <button onClick={() => handleEdit(role)}>Edit</button>
+                <button onClick={() => handleDelete(role.id)}>Delete</button>
               </td>
             </tr>
           ))}

@@ -37,31 +37,16 @@ const PermissionModal: React.FC<PermissionModalProps> = ({ onClose, permission }
     <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-75 flex items-center justify-center">
       <div className="bg-white p-6 rounded-md w-96">
       <h2>{permission ? 'Edit Permission' : 'Create Permission'}</h2>
-      <div className='mb-4'>
-      <label className="block text-sm font-semibold mb-2">
+      <label>
         Name:
-        </label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-         className="w-full p-2 border border-gray-300 rounded-md"
-          />
-      
-      </div>
-      <div className='mb-4'>
-      <label className="block text-sm font-semibold mb-2">
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      </label>
+      <label>
         Description:
-        </label>
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} 
-        className="w-full p-2 border border-gray-300 rounded-md"
-        />
-        </div>
-      <div>
-      <button onClick={handleSave}
-       className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-gray-800"
-      >Save</button>
-      <button onClick={onClose}
-      className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700"
-      >Cancel</button>
-      </div>
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+      </label>
+      <button onClick={handleSave}>Save</button>
+      <button onClick={onClose}>Cancel</button>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ const RoleTable: React.FC = () => {
 
   return (
     <div className="overflow-x-auto bg-white border border-gray-300 p-6 rounded-lg shadow-md transition duration-500 ease-in-out">
-      <button onClick={handleCreate} className='bg-indigo-950 border rounded hover:m-2 text-white'>Create Role</button>
+      <button onClick={handleCreate} className='bg-indigo-950 border rounded hover:m-2'>Create Role</button>
       <table className="min-w-full border-b border-gray-300">
         <thead>
           <tr>
