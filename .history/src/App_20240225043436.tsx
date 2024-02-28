@@ -14,11 +14,10 @@ import './App.css'
 import SignUpForm from './pages/SignUpForm';
 import ForgotPassword from './pages/ForgetPassword';
 // import ContactPage from './pages/Contact';
-// import RolesPage from './pages/Rolles';
-// import PermissionPage from './pages/Permisstion';
-import PermissionTable from './components/PermissionTable';
-import RoleTable from './components/RoleTable';
+import RolesPage from './pages/Rolles';
+import PermissionPage from './pages/Permisstion';
 import UserPage from './pages/UserPage';
+;
 
 
 
@@ -81,10 +80,8 @@ const App: React.FC = () => {
        
         <Route path="/category" element={<Category />} />
         {/* <Route path='/contact' element={<ContactPage/>}/> */}
-        {/* <Route path='/roles' element={<RolesPage/>}/> */}
-        {/* <Route path='/permission' element={<PermissionPage/>}/> */}
-        <Route path='/roles' element={<RoleTable/>}/>
-        <Route path='/permission' element={<PermissionTable/>}/>
+        <Route path='/roles' element={<RolesPage/>}/>
+        <Route path='/permission' element={<PermissionPage/>}/>
         <Route path='/user' element={<UserPage/>}/>
       
       </Routes>
