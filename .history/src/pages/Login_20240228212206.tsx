@@ -1,8 +1,6 @@
 
-
-
-
 import React, { useState } from 'react';
+
 import axios from 'axios';
 
 const Login: React.FC<{
@@ -37,27 +35,29 @@ const Login: React.FC<{
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <div className="mb-4 block">
+    <div className=' gap-8' >
+      <h2 className="text-2xl font-bold mb-4 text-center"> Well come to dashboard Login</h2>
+      <div className="mb-4 block gap-10">
+        <label>phoneNumber:</label>
         <input
           type="text"
           placeholder="Phone Number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          className="p-2 w-full border rounded-l"
+          className="p-2  border rounded-l"
         />
+        <label >Password:</label>
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-2 w-full border rounded-r"
+          className="p-2  border rounded-r"
         />
       </div>
       <button
         onClick={handleLoginSubmit}
-        className="bg-indigo-950 text-white py-2 px-4 rounded-md hover:m-2 w-full"
+        className="bg-indigo-950 text-white py-2 px-6 rounded-md hover:bg-indigo-800 "
       >
         Submit
       </button>
@@ -99,7 +99,6 @@ const Verify: React.FC<{
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
       <p className="mb-4">An OTP has been sent to your phone.</p>
-      
       <input
         type="text"
         placeholder="Enter OTP"
@@ -109,7 +108,8 @@ const Verify: React.FC<{
       />
       <button
         onClick={handleVerifySubmit}
-        className="bg-indigo-950 text-white py-2 px-4 rounded-md hover:m-2 w-full"
+        
+        className="bg-indigo-950 text-white py-2 px-4 rounded-md hover:bg-indigo-800"
       >
         Verify
       </button>
@@ -136,7 +136,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 shadow-md rounded-md w-96">
+      <div className="bg-white p-8 shadow-md rounded-md w-auto">
         {!isVerified ? (
           <Login
             phoneNumber={phoneNumber}

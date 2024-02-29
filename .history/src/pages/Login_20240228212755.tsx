@@ -99,7 +99,6 @@ const Verify: React.FC<{
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
       <p className="mb-4">An OTP has been sent to your phone.</p>
-      
       <input
         type="text"
         placeholder="Enter OTP"
@@ -135,7 +134,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="max-h-max flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-md rounded-md w-96">
         {!isVerified ? (
           <Login

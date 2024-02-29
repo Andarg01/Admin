@@ -99,7 +99,6 @@ const Verify: React.FC<{
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
       <p className="mb-4">An OTP has been sent to your phone.</p>
-      
       <input
         type="text"
         placeholder="Enter OTP"
