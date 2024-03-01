@@ -179,13 +179,13 @@ const PermissionTable: React.FC = () => {
             <p className="text-lg font-semibold">Are you sure you want to delete this permission?</p>
             <div className="flex justify-end mt-4">
               <button
-                className="border rounded bg-pink-500 text-white px-4 py-2 mr-2"
+                className="border rounded bg-red-600 text-white px-4 py-2 mr-2"
                 onClick={confirmDelete}
               >
                 Yes
               </button>
               <button
-                className="border rounded bg-indigo-950 px-4 py-2 text-white"
+                className="border rounded bg-gray-300 px-4 py-2"
                 onClick={cancelDelete}
               >
                 No

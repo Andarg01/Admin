@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -12,6 +8,7 @@ import {
   deletePermission,
 } from '../redux/actions/permissionsActions';
 import PermissionModal from './PermissionModal';
+import ReactPaginate from 'react-paginate';
 
 interface Permission {
   id: string;
@@ -23,17 +20,14 @@ interface PermissionsState {
   permissions: Permission[];
 }
 
-const PAGE_SIZE = 5;
-
 const PermissionTable: React.FC = () => {
   const dispatch = useDispatch();
   const permissions = useSelector((state: RootState) => state.permissions.permissions);
 
   const [showModal, setShowModal] = useState(false);
   const [selectedPermission, setSelectedPermission] = useState(null);
-  const [nameFilter, setNameFilter] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 5; // Adjust as needed
 
   useEffect(() => {
     dispatch(fetchPermissions());
@@ -50,76 +44,48 @@ const PermissionTable: React.FC = () => {
   };
 
   const handleDelete = (permissionId: string) => {
-    setSelectedPermission(permissionId);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = () => {
-    dispatch(deletePermission(selectedPermission));
-    setShowDeleteModal(false);
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-  };
-
-  const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNameFilter(event.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleApplyFilter = () => {
-    const filteredData = permissions.filter(permission =>
-      permission.name.toLowerCase().includes(nameFilter.toLowerCase())
-    );
-    return filteredData;
-  };
-
-  const filteredPermissions = handleApplyFilter();
-
-  const totalPages = Math.ceil(filteredPermissions.length / PAGE_SIZE);
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const currentPermissions = filteredPermissions.slice(startIndex, endIndex);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      dispatch(deletePermission(permissionId));
     }
   };
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const pageCount = Math.ceil(permissions.length / itemsPerPage);
+
+  const handlePageClick = (data: { selected: number }) => {
+    setCurrentPage(data.selected);
   };
+
+  const displayPermissions = permissions
+    .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
+    .map((permission) => (
+      <tr key={permission.id} className="border-b">
+        <td className="py-2 px-4 border-r">{permission.name}</td>
+        <td className="py-2 px-4 border-r">{permission.description}</td>
+        <td className="py-2 px-4">
+          <button
+            onClick={() => handleEdit(permission)}
+            className="edit hover:underline mr-2 hover:text-gray-700"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(permission.id)}
+            className="delete hover:underline hover:text-red-700"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    ));
 
   return (
     <div className="overflow-x-auto bg-white border border-gray-300 p-6 rounded-lg shadow-md transition duration-500 ease-in-out">
-      <div>
-        <button
-          className='border rounded bg-indigo-950 hover:m-2 text-white'
-          onClick={handleCreate}
-        >
-          Create Permission
-        </button>
-      </div>
-      <div className='flex justify-end'>
-        <p className='mt-3'>Filter by Name:</p>
-        <input
-          type="text"
-          placeholder="Filter by Name"
-          value={nameFilter}
-          onChange={handleNameFilterChange}
-          className="border rounded p-2 m-2"
-        />
-        <button
-          className='border rounded bg-indigo-950 hover:bg-indigo-800 text-white'
-          onClick={handleApplyFilter}
-        >
-          Apply Filter
-        </button>
-      </div>
+      <button
+        className="border rounded bg-indigo-950 hover:m-2 text-white"
+        onClick={handleCreate}
+      >
+        Create Permission
+      </button>
 
       <table className="min-w-full border-b border-gray-300">
         <thead className="bg-gray-100">
@@ -129,70 +95,23 @@ const PermissionTable: React.FC = () => {
             <th className="py-2 px-4 border-r cursor-pointer">Actions</th>
           </tr>
         </thead>
-        <tbody>
-          {currentPermissions.map((permission) => (
-            <tr key={permission.id} className="border-b">
-              <td className="py-2 px-4 border-r">{permission.name}</td>
-              <td className="py-2 px-4 border-r">{permission.description}</td>
-              <td className="py-2 px-4">
-                <button
-                  onClick={() => handleEdit(permission)}
-                  className="edit hover:underline mr-2 hover:text-gray-700"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(permission.id)}
-                  className="delete hover:underline hover:text-red-700"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        <tbody>{displayPermissions}</tbody>
       </table>
 
-      <div className="flex justify-center mt-4">
-        <button
-          className={`border rounded bg-indigo-950 hover:m-2 text-white ${currentPage === 1 && 'opacity-50 cursor-not-allowed'}`}
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span className="text-gray-600">{`Page ${currentPage} of ${totalPages}`}</span>
-        <button
-          className={`border rounded bg-indigo-950 hover:m-2 text-white ${currentPage === totalPages && 'opacity-50 cursor-not-allowed'}`}
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+      <ReactPaginate
+        previousLabel={'previous'}
+        nextLabel={'next'}
+        breakLabel={'...'}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={'pagination'}
+        activeClassName={'active'}
+      />
 
-      {showModal && <PermissionModal onClose={() => setShowModal(false)} permission={selectedPermission} />}
-      
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md">
-            <p className="text-lg font-semibold">Are you sure you want to delete this permission?</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="border rounded bg-pink-500 text-white px-4 py-2 mr-2"
-                onClick={confirmDelete}
-              >
-                Yes
-              </button>
-              <button
-                className="border rounded bg-indigo-950 px-4 py-2 text-white"
-                onClick={cancelDelete}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
+      {showModal && (
+        <PermissionModal onClose={() => setShowModal(false)} permission={selectedPermission} />
       )}
     </div>
   );

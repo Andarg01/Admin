@@ -18,7 +18,7 @@ const RoleTable: React.FC = () => {
   const [filter, setFilter] = useState('');
   const [filteredRoles, setFilteredRoles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rolesPerPage] = useState(5); // Number of roles per page
+  const [rolesPerPage] = useState(2); // Number of roles per page
 
   useEffect(() => {
     dispatch(fetchRoles());
@@ -73,14 +73,13 @@ const RoleTable: React.FC = () => {
       >
         Create Role
       </button>
-      <div className="mb-5 flex justify-end items-center">
-        <p className="mt-2">Search by Name:</p>
+      <div className="mb-5 flex justify-between items-center">
+        <p className="mt-3">Search by Name:</p>
         <input
           type="text"
           placeholder="Search by name..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className=' border rounded-md'
         />
         <button
           onClick={handleFilter}
@@ -113,7 +112,7 @@ const RoleTable: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleDelete(role.id)}
-                  className="delete hover:underline hover:text-pink-700"
+                  className="delete hover:underline hover:text-red-700"
                 >
                   Delete
                 </button>

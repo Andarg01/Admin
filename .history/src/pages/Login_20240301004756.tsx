@@ -69,7 +69,6 @@ const Verify: React.FC<{
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ phoneNumber, otp, onVerify, setOtp, setPhoneNumber }) => {
   const [verificationSuccess, setVerificationSuccess] = useState(false);
-  const [secondsRemaining, setSecondsRemaining] = useState(120); // 2 minutes
 
   const handleVerifySubmit = async () => {
     try {
@@ -97,43 +96,16 @@ const Verify: React.FC<{
   };
 
   useEffect(() => {
-    // Start the countdown when the component mounts
-    const timer = setInterval(() => {
-      setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-    }, 1000);
-
-    // Redirect to /permission if verification is successful or timeout
-    const redirectTimeout = setTimeout(() => {
-      if (!verificationSuccess) {
-        // Redirect to a timeout page or handle as needed
-        window.location.href = '/timeout';
-      }
-    }, secondsRemaining * 1000);
-
-    // Close the window when the countdown reaches 0
-    const closeWindowTimeout = setTimeout(() => {
-      window.close();
-    }, secondsRemaining * 1000);
-
-    // Cleanup timers on component unmount
-    return () => {
-      clearInterval(timer);
-      clearTimeout(redirectTimeout);
-      clearTimeout(closeWindowTimeout);
-    };
-  }, [verificationSuccess, secondsRemaining]);
-
-  useEffect(() => {
-    // Reset the timer when the user starts filling in the OTP
-    if (otp.some((digit) => digit !== '')) {
-      setSecondsRemaining(120); // Reset the timer to 2 minutes
+    // Redirect to /permission if verification is successful
+    if (verificationSuccess) {
+      window.location.href = '/permission';
     }
-  }, [otp]);
+  }, [verificationSuccess]);
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
-      <p className="mb-4">An OTP has been sent to your phone. Time remaining: {Math.floor(secondsRemaining / 60)}:{(secondsRemaining % 60).toString().padStart(2, '0')}</p>
+      <p className="mb-4">An OTP has been sent to your phone.</p>
       
       <div className="flex mb-4">
         {/* Six small input fields for OTP entry */}

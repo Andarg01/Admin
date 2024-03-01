@@ -185,7 +185,7 @@ const PermissionTable: React.FC = () => {
                 Yes
               </button>
               <button
-                className="border rounded bg-indigo-950 px-4 py-2 text-white"
+                className="border rounded bg-indigo-950 px-4 py-2"
                 onClick={cancelDelete}
               >
                 No

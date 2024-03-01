@@ -121,14 +121,7 @@ const Verify: React.FC<{
       clearTimeout(redirectTimeout);
       clearTimeout(closeWindowTimeout);
     };
-  }, [verificationSuccess, secondsRemaining]);
-
-  useEffect(() => {
-    // Reset the timer when the user starts filling in the OTP
-    if (otp.some((digit) => digit !== '')) {
-      setSecondsRemaining(120); // Reset the timer to 2 minutes
-    }
-  }, [otp]);
+  }, [verificationSuccess]);
 
   return (
     <div>

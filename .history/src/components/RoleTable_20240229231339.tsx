@@ -74,7 +74,7 @@ const RoleTable: React.FC = () => {
         Create Role
       </button>
       <div className="mb-5 flex justify-end items-center">
-        <p className="mt-2">Search by Name:</p>
+        <p className="mt-3">Search by Name:</p>
         <input
           type="text"
           placeholder="Search by name..."

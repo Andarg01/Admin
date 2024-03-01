@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom'; // Import useHistory from react-router-dom
 
 const Login: React.FC<{
   phoneNumber: string;
@@ -68,8 +69,7 @@ const Verify: React.FC<{
   setOtp: React.Dispatch<React.SetStateAction<string[]>>;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ phoneNumber, otp, onVerify, setOtp, setPhoneNumber }) => {
-  const [verificationSuccess, setVerificationSuccess] = useState(false);
-  const [secondsRemaining, setSecondsRemaining] = useState(120); // 2 minutes
+  const history = useHistory(); // Initialize useHistory
 
   const handleVerifySubmit = async () => {
     try {
@@ -85,7 +85,7 @@ const Verify: React.FC<{
       if (verifyResponse.status === 200) {
         // Assuming successful verification, trigger the onVerify callback
         onVerify();
-        setVerificationSuccess(true); // Set verification success state to true
+        history.push('/permission'); // Navigate to /permission route
       } else {
         // Handle verification error
         console.error('Verification failed:', verifyResponse);
@@ -96,44 +96,10 @@ const Verify: React.FC<{
     }
   };
 
-  useEffect(() => {
-    // Start the countdown when the component mounts
-    const timer = setInterval(() => {
-      setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-    }, 1000);
-
-    // Redirect to /permission if verification is successful or timeout
-    const redirectTimeout = setTimeout(() => {
-      if (!verificationSuccess) {
-        // Redirect to a timeout page or handle as needed
-        window.location.href = '/timeout';
-      }
-    }, secondsRemaining * 1000);
-
-    // Close the window when the countdown reaches 0
-    const closeWindowTimeout = setTimeout(() => {
-      window.close();
-    }, secondsRemaining * 1000);
-
-    // Cleanup timers on component unmount
-    return () => {
-      clearInterval(timer);
-      clearTimeout(redirectTimeout);
-      clearTimeout(closeWindowTimeout);
-    };
-  }, [verificationSuccess, secondsRemaining]);
-
-  useEffect(() => {
-    // Reset the timer when the user starts filling in the OTP
-    if (otp.some((digit) => digit !== '')) {
-      setSecondsRemaining(120); // Reset the timer to 2 minutes
-    }
-  }, [otp]);
-
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
-      <p className="mb-4">An OTP has been sent to your phone. Time remaining: {Math.floor(secondsRemaining / 60)}:{(secondsRemaining % 60).toString().padStart(2, '0')}</p>
+      <p className="mb-4">An OTP has been sent to your phone.</p>
       
       <div className="flex mb-4">
         {/* Six small input fields for OTP entry */}

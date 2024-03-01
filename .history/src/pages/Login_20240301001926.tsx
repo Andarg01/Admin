@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const Login: React.FC<{
@@ -63,14 +63,11 @@ const Login: React.FC<{
 
 const Verify: React.FC<{
   phoneNumber: string;
-  otp: string[];
+  otp: string;
   onVerify: () => void;
-  setOtp: React.Dispatch<React.SetStateAction<string[]>>;
+  setOtp: React.Dispatch<React.SetStateAction<string>>;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ phoneNumber, otp, onVerify, setOtp, setPhoneNumber }) => {
-  const [verificationSuccess, setVerificationSuccess] = useState(false);
-  const [secondsRemaining, setSecondsRemaining] = useState(120); // 2 minutes
-
   const handleVerifySubmit = async () => {
     try {
       // Send a request to the server to verify the OTP
@@ -78,14 +75,13 @@ const Verify: React.FC<{
         'https://sheba-app.onrender.com/api/users/login-verify',
         {
           phone: phoneNumber,
-          code: otp.join(''),
+          code: otp,
         }
       );
 
       if (verifyResponse.status === 200) {
         // Assuming successful verification, trigger the onVerify callback
         onVerify();
-        setVerificationSuccess(true); // Set verification success state to true
       } else {
         // Handle verification error
         console.error('Verification failed:', verifyResponse);
@@ -96,44 +92,10 @@ const Verify: React.FC<{
     }
   };
 
-  useEffect(() => {
-    // Start the countdown when the component mounts
-    const timer = setInterval(() => {
-      setSecondsRemaining((prevSeconds) => prevSeconds - 1);
-    }, 1000);
-
-    // Redirect to /permission if verification is successful or timeout
-    const redirectTimeout = setTimeout(() => {
-      if (!verificationSuccess) {
-        // Redirect to a timeout page or handle as needed
-        window.location.href = '/timeout';
-      }
-    }, secondsRemaining * 1000);
-
-    // Close the window when the countdown reaches 0
-    const closeWindowTimeout = setTimeout(() => {
-      window.close();
-    }, secondsRemaining * 1000);
-
-    // Cleanup timers on component unmount
-    return () => {
-      clearInterval(timer);
-      clearTimeout(redirectTimeout);
-      clearTimeout(closeWindowTimeout);
-    };
-  }, [verificationSuccess, secondsRemaining]);
-
-  useEffect(() => {
-    // Reset the timer when the user starts filling in the OTP
-    if (otp.some((digit) => digit !== '')) {
-      setSecondsRemaining(120); // Reset the timer to 2 minutes
-    }
-  }, [otp]);
-
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
-      <p className="mb-4">An OTP has been sent to your phone. Time remaining: {Math.floor(secondsRemaining / 60)}:{(secondsRemaining % 60).toString().padStart(2, '0')}</p>
+      <p className="mb-4">An OTP has been sent to your phone.</p>
       
       <div className="flex mb-4">
         {/* Six small input fields for OTP entry */}
@@ -144,9 +106,9 @@ const Verify: React.FC<{
             maxLength={1}
             value={otp[index] || ''}
             onChange={(e) => {
-              const newOtp = [...otp];
+              const newOtp = otp.slice();
               newOtp[index] = e.target.value;
-              setOtp(newOtp);
+              setOtp(newOtp.join(''));
             }}
             className="p-2 mr-2 w-10 text-center border rounded"
           />
@@ -174,12 +136,18 @@ const Verify: React.FC<{
 const LoginPage: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('+251');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState('');
   const [isVerified, setIsVerified] = useState(false);
 
   const handleLogin = () => {
     // Set some state or perform actions upon successful login
     setIsVerified(true);
+  };
+
+  const handleVerify = () => {
+    // Set some state or perform actions upon successful verification
+    // For example, redirect to another page
+    console.log('Redirecting after successful verification');
   };
 
   return (
@@ -197,7 +165,7 @@ const LoginPage: React.FC = () => {
           <Verify
             phoneNumber={phoneNumber}
             otp={otp}
-            onVerify={() => {}}
+            onVerify={handleVerify}
             setOtp={setOtp}
             setPhoneNumber={setPhoneNumber}
           />

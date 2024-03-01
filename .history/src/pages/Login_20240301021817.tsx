@@ -97,7 +97,6 @@ const Verify: React.FC<{
   };
 
   useEffect(() => {
-    // Start the countdown when the component mounts
     const timer = setInterval(() => {
       setSecondsRemaining((prevSeconds) => prevSeconds - 1);
     }, 1000);
@@ -105,21 +104,14 @@ const Verify: React.FC<{
     // Redirect to /permission if verification is successful or timeout
     const redirectTimeout = setTimeout(() => {
       if (!verificationSuccess) {
-        // Redirect to a timeout page or handle as needed
-        window.location.href = '/timeout';
+        window.location.href = '/timeout'; // Redirect to a timeout page or handle as needed
       }
-    }, secondsRemaining * 1000);
-
-    // Close the window when the countdown reaches 0
-    const closeWindowTimeout = setTimeout(() => {
-      window.close();
     }, secondsRemaining * 1000);
 
     // Cleanup timers on component unmount
     return () => {
       clearInterval(timer);
       clearTimeout(redirectTimeout);
-      clearTimeout(closeWindowTimeout);
     };
   }, [verificationSuccess, secondsRemaining]);
 

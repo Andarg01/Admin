@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -23,7 +21,7 @@ interface PermissionsState {
   permissions: Permission[];
 }
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 5; // You can adjust the number of items per page as needed
 
 const PermissionTable: React.FC = () => {
   const dispatch = useDispatch();
@@ -33,7 +31,6 @@ const PermissionTable: React.FC = () => {
   const [selectedPermission, setSelectedPermission] = useState(null);
   const [nameFilter, setNameFilter] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchPermissions());
@@ -50,22 +47,14 @@ const PermissionTable: React.FC = () => {
   };
 
   const handleDelete = (permissionId: string) => {
-    setSelectedPermission(permissionId);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = () => {
-    dispatch(deletePermission(selectedPermission));
-    setShowDeleteModal(false);
-  };
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      dispatch(deletePermission(permissionId));
+    }
   };
 
   const handleNameFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNameFilter(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to the first page when the filter changes
   };
 
   const handleApplyFilter = () => {
@@ -103,9 +92,8 @@ const PermissionTable: React.FC = () => {
         >
           Create Permission
         </button>
-      </div>
-      <div className='flex justify-end'>
-        <p className='mt-3'>Filter by Name:</p>
+        </div>
+        <p>Filter by Name</p>
         <input
           type="text"
           placeholder="Filter by Name"
@@ -114,12 +102,12 @@ const PermissionTable: React.FC = () => {
           className="border rounded p-2 m-2"
         />
         <button
-          className='border rounded bg-indigo-950 hover:bg-indigo-800 text-white'
+          className='border rounded bg-indigo-950 hover:m-2 text-white'
           onClick={handleApplyFilter}
         >
           Apply Filter
         </button>
-      </div>
+      {/* </div> */}
 
       <table className="min-w-full border-b border-gray-300">
         <thead className="bg-gray-100">
@@ -172,33 +160,14 @@ const PermissionTable: React.FC = () => {
       </div>
 
       {showModal && <PermissionModal onClose={() => setShowModal(false)} permission={selectedPermission} />}
-      
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md">
-            <p className="text-lg font-semibold">Are you sure you want to delete this permission?</p>
-            <div className="flex justify-end mt-4">
-              <button
-                className="border rounded bg-pink-500 text-white px-4 py-2 mr-2"
-                onClick={confirmDelete}
-              >
-                Yes
-              </button>
-              <button
-                className="border rounded bg-indigo-950 px-4 py-2 text-white"
-                onClick={cancelDelete}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default PermissionTable;
+
+
+
 
 
 
